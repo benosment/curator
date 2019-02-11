@@ -8,6 +8,7 @@ from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import StringIO
+from datetime import date, timedelta
 
 
 def parse_args():
@@ -58,29 +59,23 @@ args = parse_args()
 
 
 # get the top 10 posts from the previous week
-
-# TODO - create your own app string for curator
-
 # TODO - what kind of tests can you add?
 
 # TODO - what if the number of posts is less than 10?
 
-# TODO - what if reddit is experiencing a network issue?
-
-# TODO - include a link to the comments [article | comments]
-
-# TODO - email the results
-
 subreddit_name = args.subreddit_name
+# TODO - create your own PRAW client
 reddit = praw.Reddit('pycomic')
 subreddit = reddit.subreddit(subreddit_name)
 
-# TODO - include which days (i.e. 2/4 - 2/11)
-subject = f'Top 10 posts of the week for the {subreddit_name} subreddit'
+today = date.today()
+last_week = today - timedelta(days=7)
+date_string = f'{last_week.month}/{last_week.day} - {today.month}/{today.day}'
+subject = f'Top 10 posts of the week ({date_string}) for the {subreddit_name} subreddit'
 body = ''
 # TODO - can you change this into an list comprehension?
+# grab the top 10 posts from the previous week
 for submission in subreddit.top('week', limit=10):
     body = body + f'{submission.title} - <a href="{submission.url}">Article</a> ' \
            f'<a href="https://www.reddit.com{submission.permalink}">Comments</a><br>'
 send_email(subject, body)
-
